@@ -4,15 +4,14 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.OrientationHelper;
-import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.view.View;
 import android.widget.Button;
@@ -21,20 +20,22 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
-public class MainActivity extends AppCompatActivity
+public class MainActivity extends Activity
 {
 
     @BindView(R.id.add_note_btn)
     Button mAddNoteBtn;
 
     @BindView(R.id.note_recyclerView)
-    RecyclerView mNoteRecyclerView;
+    DeleteRecyclerView mNoteRecyclerView;
 
-    private List<NoteBean> mNoteBeans=new ArrayList<>();
+    private List<NoteBean> mNoteBeans = new ArrayList<>();
 
     private SQLiteDatabase db;
 
     private DatabaseOperation dop;
+
+    private MyAdapter adapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -42,9 +43,9 @@ public class MainActivity extends AppCompatActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
+        // 数据库操作
         dop = new DatabaseOperation(this, db);
         initNoteRecyclerView();
-        // 数据库操作
     }
 
     @Override
@@ -75,15 +76,21 @@ public class MainActivity extends AppCompatActivity
             NoteBean noteBean = new NoteBean();
             noteBean.id = id;
             noteBean.decs = content;
-            if(!TextUtils.isEmpty(imagepath)){
+            if (!TextUtils.isEmpty(imagepath))
+            {
                 noteBean.imagePaths = new ArrayList<>(Arrays.asList(imagepath.split("\\*")));
-            }else {
-                noteBean.imagePaths=null;
             }
-            if(!TextUtils.isEmpty(voicepath)){
-                noteBean.voicePaths =new ArrayList<>(Arrays.asList(voicepath.split("\\*"))) ;
-            }else {
-                noteBean.voicePaths=null;
+            else
+            {
+                noteBean.imagePaths = null;
+            }
+            if (!TextUtils.isEmpty(voicepath))
+            {
+                noteBean.voicePaths = new ArrayList<>(Arrays.asList(voicepath.split("\\*")));
+            }
+            else
+            {
+                noteBean.voicePaths = null;
             }
             noteBean.mood = mood;
             noteBean.time = time;
@@ -92,18 +99,51 @@ public class MainActivity extends AppCompatActivity
         dop.closeDb();
 
         // 设置Adapter
-        NoteAdapter adapter = new NoteAdapter(this, mNoteBeans);
-        adapter.setOnItemClickListener(new NoteAdapter.OnItemClickListener() {
+        adapter = new MyAdapter(this, mNoteBeans);
+        /*
+         * adapter.setOnItemClickListener(new NoteAdapter.OnItemClickListener() {
+         * @Override public void onItemClick(View view, int position) { Intent
+         * intent=new Intent(MainActivity.this,EditNoteActivity.class);
+         * intent.putExtra("noteItemData",mNoteBeans.get(position));
+         * startActivity(intent); } });
+         */
+        mNoteRecyclerView.setAdapter(adapter);
+        mNoteRecyclerView.setOnItemClickListener(new OnItemClickListener()
+        {
             @Override
-            public void onItemClick(View view, int position) {
-                Intent intent=new Intent(MainActivity.this,EditNoteActivity.class);
-                intent.putExtra("noteItemData",mNoteBeans.get(position));
+            public void onItemClick(View view, int position)
+            {
+                Intent intent = new Intent(MainActivity.this, EditNoteActivity.class);
+                intent.putExtra("noteItemData", mNoteBeans.get(position));
                 startActivity(intent);
             }
+
+            @Override
+            public void onDeleteClick(int position)
+            {
+                removeItemFromDB(mNoteBeans.get(position));
+                mNoteBeans.remove(position);
+                adapter.notifyDataSetChanged();
+            }
         });
-        mNoteRecyclerView.setAdapter(adapter);
     }
 
+    /**
+     * 从数据库中删除这条数据
+     */
+    private void removeItemFromDB(NoteBean noteBean)
+    {
+        if (noteBean != null)
+        {
+            // 创建或打开数据库
+            dop.createDb();
+            dop.deleteDb(noteBean.id);
+            dop.closeDb();
+        }
+
+    }
+
+    //初始化笔记列表
     private void initNoteRecyclerView()
     {
         LinearLayoutManager layoutManager = new LinearLayoutManager(this);
@@ -121,7 +161,7 @@ public class MainActivity extends AppCompatActivity
     @OnClick(R.id.add_note_btn)
     public void onViewClicked()
     {
-       startActivity(new Intent(this,EditNoteActivity.class));
+        startActivity(new Intent(this, EditNoteActivity.class));
 
     }
 }

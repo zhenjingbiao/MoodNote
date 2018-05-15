@@ -45,6 +45,7 @@ public class DatabaseOperation {
     	}
     	
     }
+    //更新数据库
     public void updateDb(String content, String imagepath, String voicepath,  String mood,String time, int item_ID){
     	if( content.isEmpty()||mood.isEmpty()){
     		Toast.makeText(context, "各字段不能为空", Toast.LENGTH_LONG).show();
@@ -55,16 +56,18 @@ public class DatabaseOperation {
         	//Toast.makeText(context, "修改成功", Toast.LENGTH_LONG).show();
         	}
     }
-    
+    //查询所有
     public Cursor queryDb(){
     	Cursor cursor = db.rawQuery("select * from notes",null);
     	return cursor;
     }
+    //根据ID查询
     public Cursor queryDb(int item_ID){
     	Cursor cursor = db.rawQuery("select * from notes where _id='"+item_ID+"';",null);
     	return cursor;
     	
     }
+    //根据ID查询
     public void deleteDb(int item_ID){
     	db.execSQL("delete from notes where _id='" + item_ID+"'");
     	//Toast.makeText(context, "删除成功", Toast.LENGTH_LONG).show();

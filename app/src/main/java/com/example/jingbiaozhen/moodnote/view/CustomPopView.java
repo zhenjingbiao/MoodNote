@@ -1,6 +1,7 @@
 package com.example.jingbiaozhen.moodnote.view;
 /*
  * Created by jingbiaozhen on 2018/5/9.
+ * 展示表情的PopView
  **/
 
 import java.util.List;
@@ -71,7 +72,6 @@ public class CustomPopView extends PopupWindow {
 
     /**
      * 显示popupWindow的方式设置，当然可以有别的方式。
-     *一会会列出其他方法
      * @param parent
      */
     public void showPopupWindow(View parent) {

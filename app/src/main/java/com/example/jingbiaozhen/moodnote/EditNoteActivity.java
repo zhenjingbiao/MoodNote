@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
@@ -17,7 +18,6 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.support.annotation.Nullable;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
@@ -36,7 +36,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
-public class EditNoteActivity extends AppCompatActivity implements IPopView
+public class EditNoteActivity extends Activity implements IPopView
 {
     private static final int IMAGE_PICKER = 3;
 
@@ -118,6 +118,7 @@ public class EditNoteActivity extends AppCompatActivity implements IPopView
         imagePicker.setOutPutY(1000);// 保存文件的高度。单位像素
     }
 
+    //初始化图片或者语音列表
     private void initView()
     {
         // 设置布局管理器
@@ -265,6 +266,7 @@ public class EditNoteActivity extends AppCompatActivity implements IPopView
         mSelectedIv.setImageResource(mExpressImages.get(postion));
     }
 
+    //各种点击事件
     @OnClick({R.id.save_note_btn, R.id.select_btn, R.id.add_image_btn, R.id.add_voice_btn})
     public void onViewClicked(View view)
     {

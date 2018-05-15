@@ -14,7 +14,9 @@ import android.view.View;
 import android.view.View.OnTouchListener;
 import android.widget.ImageView;
 import android.widget.ImageView.ScaleType;
-
+/**
+ * 点击小图标，展示大图片的Activity
+ */
 public class ShowPictureActivity extends Activity {
 	private ImageView img;
 	private Bitmap bm;

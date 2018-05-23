@@ -10,7 +10,7 @@
         android:id="@+id/add_image_iv"
         android:layout_width="100dp"
         android:layout_height="100dp"
-        android:scaleType="fitCenter"
+        android:scaleType="centerCrop"
         android:src="@mipmap/ic_launcher"
         />
 

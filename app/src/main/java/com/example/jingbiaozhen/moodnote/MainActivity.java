@@ -100,13 +100,6 @@ public class MainActivity extends Activity
 
         // 设置Adapter
         adapter = new MyAdapter(this, mNoteBeans);
-        /*
-         * adapter.setOnItemClickListener(new NoteAdapter.OnItemClickListener() {
-         * @Override public void onItemClick(View view, int position) { Intent
-         * intent=new Intent(MainActivity.this,EditNoteActivity.class);
-         * intent.putExtra("noteItemData",mNoteBeans.get(position));
-         * startActivity(intent); } });
-         */
         mNoteRecyclerView.setAdapter(adapter);
         mNoteRecyclerView.setOnItemClickListener(new OnItemClickListener()
         {

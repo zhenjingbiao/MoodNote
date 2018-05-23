@@ -7,8 +7,8 @@
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="50dp"
-        android:gravity="center_vertical"
         android:background="@drawable/navigationbar_bg"
+        android:gravity="center_vertical"
         >
 
         <TextView
@@ -24,10 +24,12 @@
 
         <Button
             android:id="@+id/save_note_btn"
-            android:layout_width="60dp"
-            android:layout_height="45dp"
+            android:layout_width="65dp"
+            android:layout_height="40dp"
             android:layout_alignParentRight="true"
-            android:background="@color/orange"
+            android:layout_centerVertical="true"
+            android:layout_marginRight="5dp"
+            android:background="@drawable/save_btn_bg"
             android:text="保存"
             android:textColor="#fff"
             android:textSize="16sp"/>
@@ -36,8 +38,8 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="60dp"
-        android:layout_marginLeft="15dp"
-        android:layout_marginRight="15dp"
+        android:layout_marginLeft="5dp"
+        android:layout_marginRight="5dp"
         android:layout_marginTop="5dp"
         android:gravity="center"
         android:orientation="horizontal">
@@ -52,8 +54,8 @@
 
         <ImageView
             android:id="@+id/selected_iv"
-            android:layout_width="50dp"
-            android:layout_height="50dp"
+            android:layout_width="45dp"
+            android:layout_height="45dp"
             android:scaleType="fitCenter"
             android:src="@drawable/express1"
             />
@@ -61,9 +63,10 @@
         <Button
             android:id="@+id/select_btn"
             android:layout_width="0dp"
-            android:layout_height="match_parent"
+            android:layout_height="45dp"
             android:layout_marginLeft="12dp"
             android:layout_weight="1"
+            android:background="@color/blanchedalmond"
             android:text="点击选择表情"
             />
     </LinearLayout>
@@ -92,7 +95,11 @@
                 android:id="@+id/add_image_btn"
                 android:layout_width="wrap_content"
                 android:layout_height="50dp"
-                android:background="@color/orange"
+                android:layout_marginLeft="5dp"
+                android:layout_marginTop="10dp"
+                android:background="@drawable/select_btn_bg1"
+                android:paddingLeft="2dp"
+                android:paddingRight="2dp"
                 android:text="点击添加照片"
                 android:textColor="@color/ghostwhite"/>
 
@@ -108,10 +115,14 @@
                 android:id="@+id/add_voice_btn"
                 android:layout_width="wrap_content"
                 android:layout_height="50dp"
+                android:layout_marginLeft="5dp"
                 android:layout_marginTop="10dp"
-                android:background="@color/orange"
+                android:background="@drawable/select_btn_bg1"
+                android:paddingLeft="2dp"
+                android:paddingRight="2dp"
                 android:text="点击添加语音"
                 android:textColor="@color/ghostwhite"/>
+
             <android.support.v7.widget.RecyclerView
                 android:id="@+id/voice_recyclerView"
                 android:layout_width="match_parent"

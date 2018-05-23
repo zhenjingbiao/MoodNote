@@ -29,8 +29,7 @@ import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.example.jingbiaozhen.moodnote.view.CustomPopView;
-import com.lzy.imagepicker.ImagePicker;
-import com.lzy.imagepicker.view.CropImageView;
+import com.example.jingbiaozhen.moodnote.view.SpacesItemDecoration;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -41,6 +40,8 @@ public class EditNoteActivity extends Activity implements IPopView
     private static final int IMAGE_PICKER = 3;
 
     private static final String TAG = "EditNoteActivity";
+
+    private static final int CODE_SELECT_PATHS = 100;
 
     @BindView(R.id.save_note_btn)
     Button mSaveNoteBtn;
@@ -96,38 +97,26 @@ public class EditNoteActivity extends Activity implements IPopView
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_edit_note);
         ButterKnife.bind(this);
-        initPic();
+
         initExpress();
         initView();
         initData();
     }
 
-    // 初始化添加图库图片
-    private void initPic()
-    {
-        ImagePicker imagePicker = ImagePicker.getInstance();
-        imagePicker.setImageLoader(new PicassoImageLoader()); // 设置图片加载器
-        imagePicker.setShowCamera(true); // 显示拍照按钮
-        imagePicker.setCrop(true); // 允许裁剪（单选才有效）
-        imagePicker.setSaveRectangle(true); // 是否按矩形区域保存
-        imagePicker.setSelectLimit(9); // 选中数量限制
-        imagePicker.setStyle(CropImageView.Style.RECTANGLE); // 裁剪框的形状
-        imagePicker.setFocusWidth(800); // 裁剪框的宽度。单位像素（圆形自动取宽高最小值）
-        imagePicker.setFocusHeight(800); // 裁剪框的高度。单位像素（圆形自动取宽高最小值）
-        imagePicker.setOutPutX(1000);// 保存文件的宽度。单位像素
-        imagePicker.setOutPutY(1000);// 保存文件的高度。单位像素
-    }
-
-    //初始化图片或者语音列表
+    // 初始化图片或者语音列表
     private void initView()
     {
         // 设置布局管理器
         LinearLayoutManager layoutManager = new LinearLayoutManager(this);
         layoutManager.setOrientation(LinearLayoutManager.HORIZONTAL);
+        SpacesItemDecoration imageItemDecoration=new SpacesItemDecoration(6);
+        SpacesItemDecoration voiceItemDecoration=new SpacesItemDecoration(6);
         LinearLayoutManager layoutManager1 = new LinearLayoutManager(this);
         layoutManager1.setOrientation(LinearLayoutManager.HORIZONTAL);
         mImageRecyclerView.setLayoutManager(layoutManager);
+        mImageRecyclerView.addItemDecoration(imageItemDecoration);
         mVoiceRecyclerView.setLayoutManager(layoutManager1);
+        mVoiceRecyclerView.addItemDecoration(voiceItemDecoration);
         mCustomPopView = new CustomPopView(this, this, mExpressImages);
 
     }
@@ -176,7 +165,6 @@ public class EditNoteActivity extends Activity implements IPopView
                 Intent intent = new Intent(EditNoteActivity.this, ShowPictureActivity.class);
                 intent.putExtra("imgPath", mImagePaths.get(position));
                 startActivity(intent);
-
             }
 
             @Override
@@ -191,7 +179,8 @@ public class EditNoteActivity extends Activity implements IPopView
         {
             for (String voicePath : mVoicePaths)
             {
-                if(!TextUtils.isEmpty(voicePath)&&!voicePath.equals("null")){
+                if (!TextUtils.isEmpty(voicePath) && !voicePath.equals("null"))
+                {
                     mVoiceRecyclerView.setVisibility(View.VISIBLE);
                 }
 
@@ -266,7 +255,7 @@ public class EditNoteActivity extends Activity implements IPopView
         mSelectedIv.setImageResource(mExpressImages.get(postion));
     }
 
-    //各种点击事件
+    // 各种点击事件
     @OnClick({R.id.save_note_btn, R.id.select_btn, R.id.add_image_btn, R.id.add_voice_btn})
     public void onViewClicked(View view)
     {
@@ -289,9 +278,14 @@ public class EditNoteActivity extends Activity implements IPopView
             case R.id.add_image_btn:
                 // 添加图片
                 // 调用相册
-                Intent intent = new Intent(Intent.ACTION_PICK,
-                        android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-                startActivityForResult(intent, IMAGE_PICKER);
+                /*
+                 * Intent intent = new Intent(Intent.ACTION_PICK,
+                 * android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+                 * startActivityForResult(intent, IMAGE_PICKER);
+                 */
+                // 自定义批量添加图片
+                Intent intent = new Intent(EditNoteActivity.this, SelectImageActivity.class);
+                startActivityForResult(intent, CODE_SELECT_PATHS);
                 break;
             case R.id.add_voice_btn:
                 // 添加语音
@@ -430,6 +424,16 @@ public class EditNoteActivity extends Activity implements IPopView
                 updateImage();
             }
 
+        }
+        else if (data != null && resultCode == CODE_SELECT_PATHS)
+        {
+            List<String> imagePaths = data.getStringArrayListExtra("selectedImagePaths");
+            if (imagePaths != null)
+            {
+                mImagePaths.clear();
+                mImagePaths.addAll(imagePaths);
+                updateImage();
+            }
         }
 
     }

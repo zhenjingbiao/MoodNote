@@ -4,30 +4,41 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import android.app.Activity;
 import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
+import android.support.design.widget.FloatingActionButton;
+import android.support.v4.view.GravityCompat;
+import android.support.v4.widget.DrawerLayout;
+import android.support.v7.app.ActionBar;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.OrientationHelper;
+import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
+import android.view.MenuItem;
 import android.view.View;
-import android.widget.Button;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
-public class MainActivity extends Activity
+public class MainActivity extends AppCompatActivity
 {
 
     @BindView(R.id.add_note_btn)
-    Button mAddNoteBtn;
+    FloatingActionButton mAddNoteBtn;
 
     @BindView(R.id.note_recyclerView)
     DeleteRecyclerView mNoteRecyclerView;
+
+    @BindView(R.id.toolbar)
+    Toolbar mToolbar;
+
+    @BindView(R.id.drawer_layout)
+    DrawerLayout mDrawerLayout;
 
     private List<NoteBean> mNoteBeans = new ArrayList<>();
 
@@ -43,9 +54,28 @@ public class MainActivity extends Activity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
+        setSupportActionBar(mToolbar);
+        ActionBar actionBar = getSupportActionBar();
+        if (actionBar != null)
+        {
+            actionBar.setDisplayShowHomeEnabled(true);
+            actionBar.setHomeAsUpIndicator(R.drawable.menu);
+        }
         // 数据库操作
         dop = new DatabaseOperation(this, db);
         initNoteRecyclerView();
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item)
+    {
+        switch (item.getItemId())
+        {
+            case android.R.id.home:
+                mDrawerLayout.openDrawer(GravityCompat.START);
+            default:
+        }
+        return true;
     }
 
     @Override
@@ -136,7 +166,7 @@ public class MainActivity extends Activity
 
     }
 
-    //初始化笔记列表
+    // 初始化笔记列表
     private void initNoteRecyclerView()
     {
         LinearLayoutManager layoutManager = new LinearLayoutManager(this);

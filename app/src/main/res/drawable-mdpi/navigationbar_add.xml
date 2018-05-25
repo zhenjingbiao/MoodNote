@@ -12,5 +12,5 @@
     </item>
 	<item 
 	    android:drawable="@drawable/navigationbar_add_pressed"
-	    ></item>
+	    />
 </selector>

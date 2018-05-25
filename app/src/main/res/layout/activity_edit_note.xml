@@ -85,8 +85,10 @@
                 android:id="@+id/note_input_et"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:background="@drawable/edit_bg"
+                android:gravity="left"
                 android:hint="快添加笔记吧"
-                android:minLines="1"
+                android:minHeight="150dp"
                 android:textColor="#000"
                 android:textSize="16sp"
                 />

@@ -24,11 +24,11 @@
         android:layout_height="70dp"
         android:layout_margin="5dp"
         android:layout_toRightOf="@id/tv_note_id"
-        android:singleLine="true"
+        android:lines="2"
         android:text="这是日记描述"
         android:ellipsize="end"
         android:textColor="#000"
-        android:textSize="20sp"
+        android:textSize="18sp"
         />
 
     <TextView
@@ -46,13 +46,13 @@
 
     <ImageView
         android:id="@+id/iv_note_mood"
-        android:layout_width="40dp"
-        android:layout_height="40dp"
+        android:layout_width="35dp"
+        android:layout_height="35dp"
         android:scaleType="fitCenter"
         android:layout_alignParentBottom="true"
         android:layout_marginRight="25dp"
         android:layout_toLeftOf="@id/tv_note_time"
-
+        android:src="@drawable/express1"
 
         />
     <TextView

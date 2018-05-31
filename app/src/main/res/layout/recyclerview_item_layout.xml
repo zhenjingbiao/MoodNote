@@ -1,13 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
                 android:layout_width="match_parent"
-                android:layout_height="100dp"
+                android:layout_height="104dp"
                 android:background="#ffffff">
 
     <LinearLayout
         android:id="@+id/item_layout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:layout_marginBottom="5dp"
         android:orientation="horizontal">
 
         <include
@@ -22,9 +23,9 @@
             android:id="@+id/item_delete"
             android:layout_width="100dp"
             android:layout_height="match_parent"
-            android:padding="15dp"
-            android:background="@color/colorPrimaryDark"
+            android:background="#f20"
             android:gravity="center"
+            android:padding="15dp"
             android:src="@drawable/ic_delete"
             android:textColor="#ffffff"
             android:textSize="20sp"/>
@@ -34,6 +35,8 @@
         android:layout_width="match_parent"
         android:layout_height="1dp"
         android:layout_alignParentBottom="true"
+        android:paddingTop="2dp"
+        android:paddingBottom="2dp"
         android:background="#55000000"/>
 
 </RelativeLayout>

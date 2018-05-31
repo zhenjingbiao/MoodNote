@@ -74,6 +74,7 @@ public class SelectImageActivity extends Activity
             {
                 if (mSelectedCount > 8)
                 {
+                    checkBox.setChecked(false);
                     Toast.makeText(SelectImageActivity.this, "最多只能选择9张图片", Toast.LENGTH_SHORT).show();
                     return;
                 }

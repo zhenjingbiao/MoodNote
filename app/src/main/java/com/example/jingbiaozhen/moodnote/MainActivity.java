@@ -5,13 +5,19 @@ import java.util.Arrays;
 import java.util.List;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.net.Uri;
 import android.os.Bundle;
+import android.provider.MediaStore;
+import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
+import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
+import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
@@ -20,13 +26,23 @@ import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.EditText;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.Toast;
+
+import com.bumptech.glide.Glide;
+import com.example.jingbiaozhen.moodnote.view.CircleCrop;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
-public class MainActivity extends AppCompatActivity
+public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener
+
 {
+
+    private static final int IMAGE_REQUEST_CODE = 1;
 
     @BindView(R.id.add_note_btn)
     FloatingActionButton mAddNoteBtn;
@@ -39,6 +55,13 @@ public class MainActivity extends AppCompatActivity
 
     @BindView(R.id.drawer_layout)
     DrawerLayout mDrawerLayout;
+
+    @BindView(R.id.nav_view)
+    NavigationView mNavigationView;
+
+    private ImageView mAvatarIv;
+
+    private EditText mSignatureEt;
 
     private List<NoteBean> mNoteBeans = new ArrayList<>();
 
@@ -61,9 +84,33 @@ public class MainActivity extends AppCompatActivity
             actionBar.setDisplayShowHomeEnabled(true);
             actionBar.setHomeAsUpIndicator(R.drawable.menu);
         }
+        DrawerLayout drawer = findViewById(R.id.drawer_layout);
+        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(this, drawer, mToolbar,
+                R.string.navigation_drawer_open, R.string.navigation_drawer_close);
+        drawer.addDrawerListener(toggle);
+        toggle.syncState();
+        mNavigationView.setNavigationItemSelectedListener(this);
+        initNav();
         // 数据库操作
         dop = new DatabaseOperation(this, db);
         initNoteRecyclerView();
+    }
+
+    private void initNav()
+    {
+        LinearLayout menuHeadLayout = (LinearLayout) mNavigationView.inflateHeaderView(R.layout.menu_head);
+        mAvatarIv = menuHeadLayout.findViewById(R.id.avatar_iv);
+        mSignatureEt = menuHeadLayout.findViewById(R.id.signature_et);
+        mAvatarIv.setOnClickListener(new View.OnClickListener()
+        {
+            @Override
+            public void onClick(View view)
+            {
+                Intent intent = new Intent(Intent.ACTION_PICK,
+                        android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+                startActivityForResult(intent, IMAGE_REQUEST_CODE);
+            }
+        });
     }
 
     @Override
@@ -83,6 +130,17 @@ public class MainActivity extends AppCompatActivity
     {
         super.onResume();
         initData();
+        String signature = getSharedPreferences("signature", MODE_PRIVATE).getString("signature", "");
+        String avatarPath = getSharedPreferences("signature", MODE_PRIVATE).getString("avatar", "");
+        if (!TextUtils.isEmpty(signature))
+        {
+
+            mSignatureEt.setText(signature);
+        }
+        if (!TextUtils.isEmpty(avatarPath))
+        {
+            Glide.with(this).load(avatarPath).transform(new CircleCrop(this)).into(mAvatarIv);
+        }
     }
 
     private void initData()
@@ -186,5 +244,88 @@ public class MainActivity extends AppCompatActivity
     {
         startActivity(new Intent(this, EditNoteActivity.class));
 
+    }
+
+    @Override
+    protected void onPause()
+    {
+        super.onPause();
+        SharedPreferences.Editor editor = getSharedPreferences("signature", MODE_PRIVATE).edit();
+        if (mSignatureEt != null)
+        {
+            String signature = mSignatureEt.getText().toString();
+            if (!TextUtils.isEmpty(signature))
+            {
+                editor.putString("signature", signature);
+            }
+        }
+        editor.apply();
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data)
+    {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (data != null && requestCode == IMAGE_REQUEST_CODE)
+        {
+            Uri selectedImage = data.getData(); // 获取系统返回的照片的Uri
+            String[] filePathColumn = {MediaStore.Images.Media.DATA};
+            Cursor cursor = getContentResolver().query(selectedImage, filePathColumn, null, null, null);// 从系统表中查询指定Uri对应的照片
+            cursor.moveToFirst();
+            int columnIndex = cursor.getColumnIndex(filePathColumn[0]);
+            String path = cursor.getString(columnIndex); // 获取照片路径
+            Glide.with(this).load(path).transform(new CircleCrop(this)).into(mAvatarIv);
+            SharedPreferences.Editor editor = getSharedPreferences("signature", MODE_PRIVATE).edit();
+            if (mSignatureEt != null)
+            {
+                String signature = mSignatureEt.getText().toString();
+                if (!TextUtils.isEmpty(signature))
+                {
+                    editor.putString("avatar", path);
+                }
+            }
+            editor.apply();
+            cursor.close();
+        }
+    }
+
+    @Override
+    public void onBackPressed()
+    {
+        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        if (drawer.isDrawerOpen(GravityCompat.START))
+        {
+            drawer.closeDrawer(GravityCompat.START);
+        }
+        else
+        {
+            super.onBackPressed();
+        }
+    }
+
+    @Override
+    public boolean onNavigationItemSelected(@NonNull MenuItem item)
+    {
+        int id = item.getItemId();
+        switch (id)
+        {
+            case R.id.nav_camera:
+                Toast.makeText(this, "您能提出您的建议嘛？", Toast.LENGTH_SHORT).show();
+                break;
+            case R.id.nav_gallery:
+                Toast.makeText(this, "这是一个本地项目", Toast.LENGTH_SHORT).show();
+                break;
+            case R.id.nav_slideshow:
+                Toast.makeText(this, "敬请期待", Toast.LENGTH_SHORT).show();
+                break;
+            case R.id.nav_manage:
+                Toast.makeText(this, "期待和您完善项目", Toast.LENGTH_SHORT).show();
+                break;
+            default:
+
+        }
+        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        drawer.closeDrawer(GravityCompat.START);
+        return true;
     }
 }

@@ -27,6 +27,7 @@
     </RelativeLayout>
 
     <com.example.jingbiaozhen.moodnote.DeleteRecyclerView
+        android:layout_marginTop="6dp"
         android:id="@+id/note_recyclerView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

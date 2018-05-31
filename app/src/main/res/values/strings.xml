@@ -1,3 +1,5 @@
 <resources>
-    <string name="app_name">MoodNote</string>
+    <string name="app_name">心情记事本</string>
+    <string name="navigation_drawer_open" >打开</string>
+    <string name="navigation_drawer_close" >关闭</string>
 </resources>
